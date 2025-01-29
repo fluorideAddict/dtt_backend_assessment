@@ -40,3 +40,5 @@ The database is registered in the DI container. Among other database features, q
 
 This will invoke the executeQuery method of the `App\Plugins\Db\Db` class.
 
+### Database Setup
+Import dbSetup.sql into [phpmyadmin](http://localhost/phpmyadmin).

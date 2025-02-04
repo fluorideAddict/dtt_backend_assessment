@@ -13,10 +13,3 @@ $router->mount('/facility', function () use ($router){
 $router->mount('/tags', function () use ($router){
 	$router->get('/(\w+)', App\Controllers\DbController::class . '@createTag');
 });
-
-//$router->get('/readTag/(\w+)', App\Controllers\DbController::class . '@readTag');
-//For some reason, $router->post results in the error {"error":"Route not defined"}, so I am using exclusively get requests.
-//This is not ideal, however I'm struggling to figure out an alternative.
-//createFacility/NameOfFacilityHere/
-//$router->get('/createFacility/(\w+)', App\Controllers\DbController::class . '@createFacility');
-//$router->post('/createTag/(\w+)', App\Controllers\DbController::class . '@createTag');

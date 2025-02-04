@@ -47,13 +47,13 @@ class DbController extends BaseController {
 		//
 	}
 	//Read functions
-	public function selectTag($tagName) {
+	/*public function selectTag($tagName) {
 		$query = "SELECT * FROM Tags WHERE Name = ?";
 		print("test");
 		print($tagName);
 		$bind = ["s", $tagName];
 		$this->db->executeQuery($query, $bind);
-	}
+	}*/
 
 	public function readFacility($name){
 		if($name !== null){

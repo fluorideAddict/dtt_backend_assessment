@@ -16,9 +16,10 @@ CREATE TABLE Tags(
 CREATE TABLE Facilities(
 	Name varchar(255) NOT NULL PRIMARY KEY,
 	Location varchar(255) NOT NULL,
-	Tag varchar(255) NOT NULL,
-	DateCreated DATETIME NOT NULL,
-	FOREIGN KEY (Location) REFERENCES Locations(City),
-	FOREIGN KEY (Tag) REFERENCES Tags(Name)
+	Tags varchar(255) DEFAULT '',
+	DateCreated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	FOREIGN KEY (Location) REFERENCES Locations(City)
 );
 
+INSERT INTO Locations (City, Address, ZipCode, CountryCode, PhoneNumber)
+VALUES ("Amsterdam", "Sint Nicolaasstraat 9", "1012 NJ", "31", "020 331 5848");

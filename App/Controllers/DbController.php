@@ -1,87 +1,200 @@
 <?php
 
-//This controller contains all the functions necessary for POSTing and GETting data to/from the database
+//This controller contains all the functions necessary for setting and getting data to/from the database
 
 namespace App\Controllers;
+//TODO: docker container
 
-use App\Plugins\Http\Response as Status;
-use App\Plugins\Http\Exceptions;
-use PDO;
+//include_once "/opt/lampp/htdocs/web_backend_test_catering_api/App/Models/Facility.php"
+//
+use App\Models\Facility;
+use App\Models\Location;
+use App\Models\Tag;
 
+use App\Plugins\Http\Response as Status;	// For HTTP status codes
+use App\Plugins\Http\Exceptions;		// Also for HTTP status codes? Present in IndexController.php so it is also used here for good measure
+use PDO;					// Necessary for fetching results of sql statements as associative arrays
+USE PDOException;
+
+//The below line mutes the warning for depracation of dynamic properties which causes syntax errors when displaying json responses in the browser
 #[\AllowDynamicProperties]
 class DbController extends BaseController {
 	//Create a facility
 	//TODO: automatically create and assign the requested tag if it does not already exist
 	public function createFacility() {
-		$facilityJson = file_get_contents("php://input");
-		$facilityData = json_decode($facilityJson, true);
-		if($facilityData !== null){
-			$facilityName = $facilityData["name"];
-			if($facilityName !== null){
-				$query = "INSERT INTO Facilities (Name, Location)
-					VALUES (?, ?)";
-				//Location is fixed to Amsterdam, the Name of the default Location for Facilities that are created after dbSetup.sql is imported
-				$bind = [$facilityName, "Amsterdam"];
-				$success = $this->db->executeQuery($query, $bind);
-				if ($success){
-					(new Status\Created(['message' => 'Facility successfully created.']))->send();
-					return;
-				}
-			}
+		//new
+		$response = (new Status\BadRequest([
+			"success" => false, 
+			"message" => "Facility creation failed: Bad request."
+		]));	
+
+		$requestBodyJson = file_get_contents("php://input");
+		$requestBody = json_decode($requestBodyJson, true);
+		if($requestBody && isset($requestBody["createData"])){
+			//pass the id of the facility you would like to update in facilityToUpdate
+			$facility = new Facility($requestBody["createData"]);
+			$response = $facility->createFacility();
 		}
 		//if facilityJson is empty, facilityName was not included in facilityJson or the query was unsuccessful then return a status 400
 		//TODO: Return an error 400 upon trying to create a duplicate facility
-		(new Status\BadRequest(['message' => 'Facility creation failed.']))->send();	
+		$response->send();
 	}
-
-	public function createTag($tagName) {
+	//This function creates a Tag with the "name"
+	public function createTag() {
 		//put something in place to avoid duplicate entries?
-		$query = "INSERT INTO Tags (Name)
-			VALUES (?)";
-		$bind = [$tagName];
-		$success = $this->db->executeQuery($query, $bind);
-		if($success){
-			(new Status\Ok(['message' => 'Tag successfully created!']))->send();
+		$response = (new Status\BadRequest([
+			"success" => false,
+			"message" => "Tag creation failed: Ensure a name is provided and the tag does not already exist."
+		]));
+		$requestJson = file_get_contents("php://input");
+		$requestData = json_decode($requestJson, true);
+		if($requestData && isset($requestData["createData"])){
+			$createData = $requestData["createData"];
+			$tag = new Tag($createData);
+			$response = $tag->createTag();
 		}
-		//return $success;
-		//
+		$response->send();
 	}
-	//Read functions
-	/*public function selectTag($tagName) {
-		$query = "SELECT * FROM Tags WHERE Name = ?";
-		print("test");
-		print($tagName);
-		$bind = ["s", $tagName];
-		$this->db->executeQuery($query, $bind);
-	}*/
-
-	public function readFacility($name){
-		if($name !== null){
-			$query = "SELECT * FROM Facilities WHERE Name = ?";
-			$bind = [$name];
-			$success = $this->db->executeQuery($query, $bind);
-			if($success){
-				$result = $this->db->getStatement()->fetch(PDO::FETCH_ASSOC);
-				$resultJson = json_encode($result);
-				(new Status\Ok($resultJson))->send();
-				return;
-			}
+	//This function returns a facility from Facilities where the Name exactly matches the given $facilityName as a JSON object
+	public function getFacility($id = 0){
+		$response = (new Status\BadRequest([
+			"success" => false,
+			"message" => "Facility read failed: invalid or missing parameters."
+		]));
+		if ($id) {
+			$facility = new Facility(["id" => $id]);
+			$response = $facility->readFacility();	
+		} elseif($_GET){
+			//$searchParams = ["facilityId", "name", "tags", "locationId", "city", "address", "zipCode"];
+			$facilityData = [
+				//"id" => $_GET["id"] ?? null,
+				"name" => $_GET["name"] ?? null,
+				"tags" => $_GET["tags"] ?? null,
+				"location" => new Location([
+					"locationId" => $_GET["locationId"] ?? null,
+					"city" => $_GET["city"] ?? null,
+					"address" => $_GET["address"] ?? null,
+					//TODO: Filter out spaces from the zipcode parameter if present
+					"zipCode" => null
+				])
+			];
+			$facility = new Facility($facilityData);
+			$response = $facility->readFacility();	
+		} else {
+			$facility = new Facility();
+			$response = $facility->readFacility(true);
 		}
-		(new Status\BadRequest(['message' => 'Reading facility failed.']))->send();
+		$response->send();
+	}
+	
+	public function getTag($id = 0){
+		$response = (new Status\BadRequest([
+			"success" => false,
+			"message" => "Tag read failed: invalid or missing parameters."]));
+		if ($id) {
+			$tag = new Tag(["id" => $id]);
+			$response = $tag->readTag();	
+		} elseif($_GET){
+			//$searchParams = ["facilityId", "name", "tags", "locationId", "city", "address", "zipCode"];
+			$tagData = [
+				//"id" => $_GET["id"] ?? null,
+				"name" => $_GET["name"] ?? null
+			];
+			$tag = new Tag($tagData);
+			$response = $tag->readTag();	
+		} else {
+			$tag = new Tag();
+			$response = $tag->readTag(true);
+		}
+		$response->send();
+
 	}
 	//Update functions
-	/*
-	public function updateTag(oldTagName, newTagName) {
-		
-	}
-	//Delete functions
-	//Select facility with specific name, delete it
-	public function deleteFacility(Name) {
+	//Update the facility with all supplied (valid) properties
+	public function updateFacility($id = 0){
+		$response = (new Status\BadRequest([
+			"success" => false, 
+			"message" => "Facility update failed: Bad request. Ensure the facility with the supplied ID exists."
+		]));
+		if($id){
+			$requestBodyJson = file_get_contents("php://input");
+			$requestBody = json_decode($requestBodyJson, true);
+			if($requestBody && isset($requestBody["updateData"])){
+				//pass the id of the facility you would like to update in facilityToUpdate
+				//$updateOnFacilityId = $requestBody["updateOnFacilityId"];
+				$updateData = $requestBody["updateData"];
+				$updateData["id"] = $id;
+				$facility = new Facility($updateData);
+				//$facility->id = $updateOnFacilityId;
+				$response = $facility->updateFacility();
+			}
+		}
+		$response->send();
+	}	
 
+	//TODO: this?
+	/*public function updateTagOnId($id){
+		$response = [
+			"success" => false,
+			"message" => "Tag update failed: ensure a tag with the supplied ID exists."
+		];
+		if($id){
+			$requestBodyJson = file_get_contents("php://input");
+			$requestBody = json_decode($requestBodyJson, true);
+			if($requestBody && isset($requestBody["updateData"])){
+				$updateData = $requestBody["updateData"];
+				$tag = new Tag($updateData);
+				$response = $tag->updateTag("id", $id);
+			}
+		}
+		if($response["success"]){
+			(new Status\Ok($response))->send();
+		} else {	
+			(new Status\BadRequest($response))->send();
+		}
+	}*/
+
+	public function updateTagOnName($name){
+		$response = (new Status\BadRequest([
+			"success" => false,
+			"message" => "Tag update failed: ensure a tag with the supplied ID exists."
+		]));
+		if ($name) {
+			$requestBodyJson = file_get_contents("php://input");
+			$requestBody = json_decode($requestBodyJson, true);
+			if($requestBody && isset($requestBody["updateData"])){
+				$name = str_replace("_", " ", $name);
+				$updateData = $requestBody["updateData"];
+				$tag = new Tag($updateData);
+				$response = $tag->updateTag("name", $name);
+			}
+		}
+			$response->send();
+		}	
+	//Delete functions
+	//Deletes all references to $facilityName from the FacilitiesTags table and deletes the facility from the Facilities table
+	public function deleteFacility($facilityId){
+		$response = (new Status\BadRequest([
+			"success" => false,
+			"message" => "Facility deletion failed: No valid ID was given."
+		]));
+		if($facilityId) {
+			$facility = new Facility(["id" => $facilityId]);
+			$response = $facility->deleteFacility();			
+		}
+		$response->send();
 	}
-	public function deleteTags(tagName){
-	
+	//Deletes all references to $tagName from the FacilitiesTags table and deletes the tag from the Tags table
+	public function deleteTag($tagId){
+		$response = (new Status\BadRequest([
+			"success" => false,
+			"message" => "Tag deletion failed: invalid or missing parameters."
+		]));
+		if($tagId) {
+			$tag = new Tag(["id" => $tagId]);
+			$response = $tag->deleteTag();		
+		}
+		$response->send();
 	}
-	*/
 }
 

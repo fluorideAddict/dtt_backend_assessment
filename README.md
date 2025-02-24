@@ -52,7 +52,7 @@ The API has 9 approachable endpoints:
    - GET: Retrieve all Tags and their respective ID and names, or if query strings are passed retrieve all Tags with matching fields 
 - /tags/id
    - ~~PATCH: Update a Tag with the ID of the given endpoint using the fields from the given updateData object to be passed in the request body.~~ The functionality for this endpoint is present but unused, so this endpoint ends up disabled.
-   - GET: Retrieve the Tag with the ID of the given endpoint~
+   - GET: Retrieve the Tag with the ID of the given endpoint
    - DELETE: Deletes the Tag with the ID of the given endpoint
 - /tags/name
    - PATCH: Update a Tag using fields from the given updateData object to be passed in the request body.

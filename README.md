@@ -44,15 +44,16 @@ The API has 9 approachable endpoints:
    - POST: Create a Facility using fields from the given createData object to be passed in the request body.
    - GET: Retrieve all Facilities, or if query strings are passed retreive all Facilities with matching fields
 - /facilities/id
-   - GET: Retrieve the Facility with the ID on the given endpoint
-   - DELETE: Delete the Facility with the ID on the given endpoint
+   - GET: Retrieve the Facility with the ID of the given endpoint
+   - DELETE: Delete the Facility with the ID of the given endpoint
    - PATCH: Update a Facility using fields from the given updateData object to be passed in the request body.
 - /tags
    - POST: Create a Tag using fields from the given createData object passed in the request body.
    - GET: Retrieve all Tags and their respective ID and names, or if query strings are passed retrieve all Tags with matching fields 
 - /tags/id
-   - ~~GET: Retrieve the Tag with the ID on the given endpoint~~ The functionality for this endpoint is present but unused, so this endpoint ends up disabled.
-   - DELETE: Deletes the Tag with the ID on the given endpoint
+   - ~~PATCH: Update a Tag with the ID of the given endpoint using the fields from the given updateData object to be passed in the request body.~~ The functionality for this endpoint is present but unused, so this endpoint ends up disabled.
+   - GET: Retrieve the Tag with the ID of the given endpoint~
+   - DELETE: Deletes the Tag with the ID of the given endpoint
 - /tags/name
    - PATCH: Update a Tag using fields from the given updateData object to be passed in the request body.
 

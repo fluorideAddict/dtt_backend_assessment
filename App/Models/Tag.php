@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Plugins\Http\Response as Status;                                                              
+use App\Plugins\Http\Response as Status;                                                    
 use App\Plugins\Http\Exceptions;
 
 use PDO;
@@ -41,7 +41,6 @@ class Tag extends BaseModel {
 				}                                                     
 			} catch (PDOException $e) {
 				$this->db->rollBack();
-				//TODO: Response
 				$response = (new Status\InternalServerError([
 					"success" => false,
 					"message" => "Tag creation failed: One or more fields are invalid. Tag may already exist."
@@ -69,7 +68,6 @@ class Tag extends BaseModel {
 			];
 		}
 		try {
-			//$this->db->beginTransaction();
 			$tagQuerySuccess = $this->db->executeQuery($tagQuery, $tagBind);
 			if ($tagQuerySuccess) {
 				$queryResult = $this->db->getStatement()->fetchAll(PDO::FETCH_ASSOC);
@@ -94,14 +92,12 @@ class Tag extends BaseModel {
 						"result" => $returnResult[0]
 					]));
 				}
-				//$this->db->commit();
 			}
 		} catch (PDOException $e) {
 			$response = (new Status\InternalServerError([
 				"success" => false,
 				"message" => "Reading facility failed."
 			]));
-			//$this->db->rollBack();
 		}
 		return $response;
 	}

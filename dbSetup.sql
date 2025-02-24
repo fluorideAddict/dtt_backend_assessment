@@ -38,7 +38,7 @@ CREATE TABLE FacilitiesTags(
 INSERT INTO Locations (City, Address, ZipCode, CountryCode, PhoneNumber)
 VALUES ("Amsterdam", "Sint Nicolaasstraat 9", "1012NJ", "31", "020 331 5848");
 
-/* populate facilities */
+/* populate facilities table */
 /*INSERT INTO Facilities ()
 VALUES ();*/
 

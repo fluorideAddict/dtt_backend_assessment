@@ -12,15 +12,15 @@ use App\Models\Location;
 use App\Models\Tag;
 
 use App\Plugins\Http\Response as Status;	// For HTTP status codes
-use App\Plugins\Http\Exceptions;		// Also for HTTP status codes? Present in IndexController.php so it is also used here for good measure
+use App\Plugins\Http\Exceptions;		// Also for HTTP status codes? Present in IndexController.php so it is also used here for good measure.
 use PDO;					// Necessary for fetching results of sql statements as associative arrays
 USE PDOException;
 
 //The below line mutes the warning for depracation of dynamic properties which causes syntax errors when displaying json responses in the browser
 #[\AllowDynamicProperties]
-class DbController extends BaseController {
+class MainController extends BaseController {
+	//Create functions
 	//Create a facility
-	//TODO: automatically create and assign the requested tag if it does not already exist
 	public function createFacility() {
 		//new
 		$response = (new Status\BadRequest([
@@ -35,8 +35,6 @@ class DbController extends BaseController {
 			$facility = new Facility($requestBody["createData"]);
 			$response = $facility->createFacility();
 		}
-		//if facilityJson is empty, facilityName was not included in facilityJson or the query was unsuccessful then return a status 400
-		//TODO: Return an error 400 upon trying to create a duplicate facility
 		$response->send();
 	}
 	//This function creates a Tag with the "name"
@@ -55,6 +53,7 @@ class DbController extends BaseController {
 		}
 		$response->send();
 	}
+	//Read functions
 	//This function returns a facility from Facilities where the Name exactly matches the given $facilityName as a JSON object
 	public function getFacility($id = 0){
 		$response = (new Status\BadRequest([
@@ -163,14 +162,15 @@ class DbController extends BaseController {
 			$requestBodyJson = file_get_contents("php://input");
 			$requestBody = json_decode($requestBodyJson, true);
 			if($requestBody && isset($requestBody["updateData"])){
-				$name = str_replace("_", " ", $name);
+				$name = str_replace("-", " ", $name);
 				$updateData = $requestBody["updateData"];
 				$tag = new Tag($updateData);
 				$response = $tag->updateTag("name", $name);
 			}
 		}
-			$response->send();
-		}	
+		$response->send();
+	}
+
 	//Delete functions
 	//Deletes all references to $facilityName from the FacilitiesTags table and deletes the facility from the Facilities table
 	public function deleteFacility($facilityId){

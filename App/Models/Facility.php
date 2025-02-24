@@ -140,7 +140,6 @@ class Facility extends BaseModel {
 				LEFT JOIN FacilitiesTags ON Facilities.Id = FacilitiesTags.FacilityId
 				LEFT JOIN Tags ON Tags.Id = FacilitiesTags.TagId " . $facilityQueryWhere . " GROUP BY Facilities.Id " . $facilityQueryHaving;	
 			try{
-				//$this->db->beginTransaction();
 				$facilitySuccess = $this->db->executeQuery($facilityQuery, $facilityBind);
 				if($facilitySuccess){
 					//Could I skip $this->db->executeQuery and just use the line below? I could be querying the database twice when that is not necessary
@@ -180,11 +179,8 @@ class Facility extends BaseModel {
 							"result" => $returnResult
 						]));
 					}
-					//$this->db->commit();
 				}
 			} catch (PDOException $e) {
-				//$this->db->rollBack();
-
 				$response = (new Status\InternalServerError([
 					"success" => false,
 					"message" => "Facility read failed: Invalid parameters."

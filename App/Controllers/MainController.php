@@ -74,7 +74,7 @@ class MainController extends BaseController {
 					"city" => $_GET["city"] ?? null,
 					"address" => $_GET["address"] ?? null,
 					//TODO: Filter out spaces from the zipcode parameter if present
-					"zipCode" => null
+					"zipCode" => $_GET["zipCode"] ?? null
 				])
 			];
 			$facility = new Facility($facilityData);
@@ -89,12 +89,12 @@ class MainController extends BaseController {
 	public function getTag($id = 0){
 		$response = (new Status\BadRequest([
 			"success" => false,
-			"message" => "Tag read failed: invalid or missing parameters."]));
+			"message" => "Tag read failed: invalid or missing parameters."
+		]));
 		if ($id) {
 			$tag = new Tag(["id" => $id]);
 			$response = $tag->readTag();	
 		} elseif($_GET){
-			//$searchParams = ["facilityId", "name", "tags", "locationId", "city", "address", "zipCode"];
 			$tagData = [
 				//"id" => $_GET["id"] ?? null,
 				"name" => $_GET["name"] ?? null
@@ -131,12 +131,11 @@ class MainController extends BaseController {
 		$response->send();
 	}	
 
-	//TODO: this?
-	/*public function updateTagOnId($id){
-		$response = [
+	public function updateTagOnId($id){
+		$response = (new Status\BadRequest([
 			"success" => false,
 			"message" => "Tag update failed: ensure a tag with the supplied ID exists."
-		];
+		]));
 		if($id){
 			$requestBodyJson = file_get_contents("php://input");
 			$requestBody = json_decode($requestBodyJson, true);
@@ -145,15 +144,11 @@ class MainController extends BaseController {
 				$tag = new Tag($updateData);
 				$response = $tag->updateTag("id", $id);
 			}
-		}
-		if($response["success"]){
-			(new Status\Ok($response))->send();
-		} else {	
-			(new Status\BadRequest($response))->send();
-		}
-	}*/
+		}	
+		$response->send();
+	}
 
-	public function updateTagOnName($name){
+	/*public function updateTagOnName($name){
 		$response = (new Status\BadRequest([
 			"success" => false,
 			"message" => "Tag update failed: ensure a tag with the supplied ID exists."
@@ -169,7 +164,7 @@ class MainController extends BaseController {
 			}
 		}
 		$response->send();
-	}
+	}*/
 
 	//Delete functions
 	//Deletes all references to $facilityName from the FacilitiesTags table and deletes the facility from the Facilities table
@@ -193,6 +188,18 @@ class MainController extends BaseController {
 		if($tagId) {
 			$tag = new Tag(["id" => $tagId]);
 			$response = $tag->deleteTag();		
+		}
+		$response->send();
+	}
+
+	public function deleteTagFromFacility($facilityId, $tagId){
+		$response = (new Status\BadRequest([
+			"success" => false,
+			"message" => "Tag deletion failed: invalid or missing parameters."
+		]));
+		if($facilityId && $tagId) {
+			$facility = new Facility(["id" => $facilityId]);
+			$response = $facility->deleteTagFromFacility($tagId);
 		}
 		$response->send();
 	}

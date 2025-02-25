@@ -1,0 +1,947 @@
+{
+	"info": {
+		"_postman_id": "02859bfc-cd8b-44a4-8c9d-508c7bdcfe80",
+		"name": "DTT Back end assessment – Catering API",
+		"description": "The Postman collection for the DTT backend assessment test: Catering API.\n\nNote that the ID columns within the database auto-increment, so in order to repeat GET, PATCH and DELETE requests that match by ID you will have to manually input the new IDs or drop the database and import dbSetup.sql. It is recommended to use phpmyadmin to track changes in the database as you perform the requests within this collection.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41276536"
+	},
+	"item": [
+		{
+			"name": "Facility requests",
+			"item": [
+				{
+					"name": "Create facility without tags",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"createData\": {\n        \"name\": \"Tagless Facility\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "facilityName",
+									"value": "testFacility2",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Creates a facility without tags."
+					},
+					"response": []
+				},
+				{
+					"name": "Create facility with empty tags",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"createData\": {\n        \"name\": \"Tagless Facility 2\",\n        \"tags\": []\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "facilityName",
+									"value": "testFacility2",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Creates a facility without tags, demonstration of how the API handles an empty tags property."
+					},
+					"response": []
+				},
+				{
+					"name": "Create facility with tags",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"createData\": {\n        \"name\": \"Facility With Tags\",\n        \"tags\": [\"Coffee Machine\", \"Elevator\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "facilityName",
+									"value": "testFacility2",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Creates a facility with two tags."
+					},
+					"response": []
+				},
+				{
+					"name": "Create facility with nonexistent tag",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"createData\": {\n        \"name\": \"Invalid Facility\",\n        \"tags\": [\"Nonexistent Tag\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "facilityName",
+									"value": "testFacility2",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Attempts to create a facility with a non-existent tag."
+					},
+					"response": []
+				},
+				{
+					"name": "Create facility with empty string as name",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"createData\": {\n        \"name\": \"\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "facilityName",
+									"value": "testFacility2",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Attempts to create a facility with the name property in the createData set to an empty string."
+					},
+					"response": []
+				},
+				{
+					"name": "Read all facilities",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							]
+						},
+						"description": "Returns all facilities."
+					},
+					"response": []
+				},
+				{
+					"name": "Read facility by name",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities?name=Secondary Office",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Secondary Office"
+								}
+							]
+						},
+						"description": "Returns all facilities with the given query parameter. (name=Secondary Office in this example)"
+					},
+					"response": []
+				},
+				{
+					"name": "Read facility by city",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities?city=Amsterdam",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "Amsterdam"
+								}
+							]
+						},
+						"description": "Returns all facilities with the given query parameter. (city = Amsterdam in this example)"
+					},
+					"response": []
+				},
+				{
+					"name": "Read facility by zip code",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities?zipCode=1012NJ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "zipCode",
+									"value": "1012NJ"
+								}
+							]
+						},
+						"description": "Returns all facilities with the given query parameter (zipCode = 1012NJ in this example)"
+					},
+					"response": []
+				},
+				{
+					"name": "Read facility by city (partial match)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities?city=ams",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "ams"
+								}
+							]
+						},
+						"description": "GETTING /facilities with query parametersReturns also returns facilities with properties that partially match the given query parameter (city = ams in this example, will return all facilities with the city set to Amsterdam)"
+					},
+					"response": []
+				},
+				{
+					"name": "Read facility by tag name",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities?tags=Coffee Machine",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "tags",
+									"value": "Coffee Machine"
+								}
+							]
+						},
+						"description": "Returns all facilities with a tag that matches the given query parameter (tags = Coffee Machine in this example)"
+					},
+					"response": []
+				},
+				{
+					"name": "Read facility by facility name and tag name",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities?name=Headquarters&tags=Coffee Machine",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Headquarters"
+								},
+								{
+									"key": "tags",
+									"value": "Coffee Machine"
+								}
+							]
+						},
+						"description": "Returns all facilities with properties that match the given query parameters (all facilities with a name of Headquarters and associated with the Coffee Machine tag in this example)"
+					},
+					"response": []
+				},
+				{
+					"name": "Read facility by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"1"
+							]
+						},
+						"description": "Returns the facility with the given ID in the URI if it exists."
+					},
+					"response": []
+				},
+				{
+					"name": "Read nonexistent facility",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/facilities?name=Nonexistent Facility",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Nonexistent Facility"
+								}
+							]
+						},
+						"description": "Attempts to return a facility by name; the doesn't exist so it will return an empty set."
+					},
+					"response": []
+				},
+				{
+					"name": "Update facility name",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updateData\": {\n        \"name\": \"Updated Facility\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities/7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"7"
+							]
+						},
+						"description": "Update the facility with the ID in the given URI using the fields in the updateData object passed in the request body. This example updates the name of the facility with ID 7."
+					},
+					"response": []
+				},
+				{
+					"name": "Update facility tags",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updateData\": {\n        \"tags\": [\"Security\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities/7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"7"
+							]
+						},
+						"description": "Update the facility with the ID in the given URI using the fields in the updateData object passed in the request body. This example adds the tag Security onto the facility with ID 7."
+					},
+					"response": []
+				},
+				{
+					"name": "Update facility name and tags",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updateData\": {\n        \"name\": \"Tagged Facility\",\n        \"tags\": [\"Coffee Machine\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"5"
+							]
+						},
+						"description": "Update the facility with the ID in the given URI using the fields in the updateData object passed in the request body. This example renames the facility with ID 5 (named Tagless Facility) to Tagged Facility and assigns the Coffee Machine tag to it."
+					},
+					"response": []
+				},
+				{
+					"name": "Update facility with nonexistent tag",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updateData\": {\n        \"tags\": [\"Nonexistent Tag\"]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"5"
+							]
+						},
+						"description": "Attemps to update the facility with the ID in the given URI using the fields in the updateData object passed in the request body. This example returns an error because the tag given does not exist."
+					},
+					"response": []
+				},
+				{
+					"name": "Update nonexistent facility",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updateData\": {\n        \"name\": \"Invalid Facility\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/facilities/9999999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"9999999"
+							]
+						},
+						"description": "Attempts to update the facility with the ID in the given URI using the fields in the updateData object passed in the request body. This example returns an error because no facility exists with the given ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tag from facility",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/facilities/7/tags/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"7",
+								"tags",
+								"5"
+							]
+						},
+						"description": "Deletes the tag with the ID in the given URI from FacilitiesTags, severing the relation between the passed facility and tag. This example assigns deletes the tag with ID 5 (Coffee Machine) from the facility with ID 7 (Facility With Tags)."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete facility by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/facilities/7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"facilities",
+								"7"
+							]
+						},
+						"description": "Deletes the facility with the ID in the given URI if it exists. This example deletes the facility with ID 7 (Facility With Tags)."
+					},
+					"response": []
+				}
+			],
+			"description": "Examples of all possible facility-related requests are contained within this folder.\n\nValid endpoints per HTTP request type:\n\nPOST:\n\n- /facilities : Creates a facility with the given createData object in the request body.\n    \n    - Valid createData fields:\n        \n        - name \\[REQUIRED\\] (string)\n            \n        - tags (array of strings)\n            \n\nGET:\n\n- /facilities\n    \n    - Returns all facilities.\n        \n- /facilities/id\n    \n    - Returns the facility with the given ID if it exists.\n        \n- /facilities/queryParameter=\n    \n    - Searches for and returns the tag that most closely matches the given queryParameter.\n        \n        - Valid query parameters are:\n            \n            - name\n                \n            - tags\n                \n            - city\n                \n            - address\n                \n            - zipCode\n                \n        - Also valid query parameters (though impractical):\n            \n            - countryCode\n                \n            - phoneNumber\n                \n            - dateCreated\n                \n\nPATCH:\n\n- /facilities/id\n    \n    - Updates the facility with the given updateData object in the request body.\n        \n        - Valid updateData fields:\n            \n            - name (string)\n                \n            - tags (array of strings)\n                \n\nDELETE:\n\n- /facilities/id\n    \n    - Deletes the facility with the given ID and removes all references to it in the FacilitiesTags table if the facility exists, thus also destroying any existing relations with Tags."
+		},
+		{
+			"name": "Tag requests",
+			"item": [
+				{
+					"name": "Create a tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tried tracking the last inserted ID to make this postman collection more pleasant to test, but I couldn't get it to track consistently",
+									"//let response = pm.response.json();",
+									"//console.log(response[\"result\"][\"id\"]);",
+									"//let lastInsertedId = pm.collectionVariables.get(\"lastInsertedId\");",
+									"//pm.collectionVariables.set(\"lastInsertedId\", ++lastInsertedId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"createData\": {\n        \"name\": \"New Tag\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags"
+							],
+							"query": [
+								{
+									"key": "facilityName",
+									"value": "testFacility2",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Creates a tag using the name property contained within the createData object."
+					},
+					"response": []
+				},
+				{
+					"name": "Read all tags",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags"
+							]
+						},
+						"description": "Returns all tags."
+					},
+					"response": []
+				},
+				{
+					"name": "Read tag by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								"1"
+							]
+						},
+						"description": "Returns the tag with the ID in the given URI if it exists."
+					},
+					"response": []
+				},
+				{
+					"name": "Read tag by name",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags?name=Customer Support",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Customer Support"
+								}
+							]
+						},
+						"description": "Returns a single tag with a name that matches the name query parameter."
+					},
+					"response": []
+				},
+				{
+					"name": "Read nonexistent tag",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags/99999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								"99999"
+							]
+						},
+						"description": "Attempts to get a tag with the ID Of 99999, which does not exist therefore an error will be returned."
+					},
+					"response": []
+				},
+				{
+					"name": "Update tag name by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updateData\": {\n        \"name\": \"Updated Tag\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags/6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								"6"
+							]
+						},
+						"description": "Updates the tag name with the ID given in the URI using the name field passed in the updateData object in the request body. This example updates the name of the tag with an ID of 6 to \"Updated Tag\"."
+					},
+					"response": []
+				},
+				{
+					"name": "Update nonexistent tag",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updateData\": {\n        \"name\": \"Nonexistent Tag\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags/99999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								"99999"
+							]
+						},
+						"description": "Attempts to update the tag name with the ID given in the URI using the name field passed in the updateData object in the request body. This example returns an error because there is no tag with an ID of 99999."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tag by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tags/6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								"6"
+							]
+						},
+						"description": "Attempts to delete the ID with the tag given in the URI. This example deletes the tag with the ID 6 (now named Updated Tag.)"
+					},
+					"response": []
+				}
+			],
+			"description": "Examples of all possible tag-related requests are contained within this folder. Although these were not explicitly required as part of the assessment, the functionality these endpoints use were already mostly present as part of the Facility model, so I created the /tags endpoint inspired by imageboard sites.\n\nValid endpoints per HTTP request type:\n\nPOST:\n\n- /tags\n    \n    - Creates a tag with the given createData object in the request body.\n        \n        - Valid createData fields:\n            \n            - name \\[REQUIRED\\] (string)\n                \n\nGET:\n\n- /tags\n    \n    - Returns all tags.\n        \n- /tags/id\n    \n    - Returns the tag with the given ID if it exists.\n        \n- /tags/name\n    \n    - Searches for and returns the tag that most closely matches the given name. Also returns partial matches.\n        \n\nPATCH:\n\n- /tags/id\n    \n    - Updates the tag with the given updateData object in the request body.\n        \n        - Valid updateData fields:\n            \n            - name (string)\n                \n\nDELETE:\n\n- /tags/id\n    \n    - Deletes the tag with the given ID and removes all references to it in the FacilitiesTags table if the tag exists, thus also destroying any existing relations with Facilities.\n        \n\nNote that the ID columns within the database auto-increment, so in order to repeat GET, PATCH and DELETE requests that match by ID you will have to manually input the new IDs or drop the database and import dbSetup.sql. It is recommended to use phpmyadmin to track changes in the database as you perform the requests within this collection."
+		},
+		{
+			"name": "Test API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/test",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"test"
+					]
+				},
+				"description": "API call used to test local development environment and database connection.\n\nShould print _'Hello World!'_ if all is OK."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost/web_backend_test_catering_api",
+			"type": "string"
+		},
+		{
+			"key": "lastInsertedId",
+			"value": "1",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "lastInsertedId",
+			"value": ""
+		}
+	]
+}

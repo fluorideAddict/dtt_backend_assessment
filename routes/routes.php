@@ -10,15 +10,17 @@ $router->mount('/facilities', function () use ($router){
 	$router->post('/', App\Controllers\MainController::class . '@createFacility');
 	$router->get('/', App\Controllers\MainController::class . '@getFacility');
 	$router->get('/(\d+)', App\Controllers\MainController::class . '@getFacility');
-	$router->delete('/(\d+)', App\Controllers\MainController::class . '@deleteFacility');
 	$router->patch('/(\d+)', App\Controllers\MainController::class . '@updateFacility');
+	$router->delete('/(\d+)', App\Controllers\MainController::class . '@deleteFacility');
+	$router->delete('/(\d+)/tags/(\d+)', App\Controllers\MainController::class . '@deleteTagFromFacility');
 });
 $router->mount('/tags', function () use ($router){
 	$router->post('/', App\Controllers\MainController::class . '@createTag');
-	//The router does not differentiate between digit and word character matches, therefore it will require a specialised regular expression to be able to tell the two apart. For now this functionality has been left out as the Name column of the Tags table is unique and searching for tags by name would be the more common use case as the Tags of a returned Facility object is comprised solely of Tag names
-	//$router->patch('/(\d+)', App\Controllers\DbController::class . '@updateTagOnId');	
-	$router->patch('/(\w+)', App\Controllers\MainController::class . '@updateTagOnName');
 	$router->get('/', App\Controllers\MainController::class . '@getTag');
 	$router->get('/(\d+)', App\Controllers\MainController::class . '@getTag');
+	$router->patch('/(\d+)', App\Controllers\MainController::class . '@updateTagOnId');	
+	//The functionality below is present but unused, so the route stays disabled
+	//$router->patch('/(\w+)', App\Controllers\MainController::class . '@updateTagOnName');
 	$router->delete('/(\d+)', App\Controllers\MainController::class . '@deleteTag');
 });
+

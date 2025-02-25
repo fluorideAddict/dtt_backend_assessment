@@ -35,23 +35,24 @@ class Tag extends BaseModel {
 					//TODO: Location header and created Tag in response	
 					$response = (new Status\Created([
 						"success" => true,                    
-						"message" => "Tag successfully created."
+						"message" => "Tag successfully created.",
+						"result" => json_decode($this->readTag()->getBody(), true)["result"]
 					]));
 					$this->db->commit();  
 				}                                                     
 			} catch (PDOException $e) {
 				$this->db->rollBack();
-				$response = (new Status\InternalServerError([
+				$response = (new Status\BadRequest([
 					"success" => false,
 					"message" => "Tag creation failed: One or more fields are invalid. Tag may already exist."
 				]));
 			}
 		}
-		return $response;	
+		return $response;
 	}
 
 	public function readTag($getAllTags = false){
-		$response = (new Status\BadRequest([
+		$response = (new Status\NotFound([
 			"success" => false,
 			"message" => "Reading tag failed: no matches found."
 		]));
@@ -78,69 +79,83 @@ class Tag extends BaseModel {
 							"id" => $queryResultRow["id"],
 							"name" => $queryResultRow["name"]
 						]);
+					}		
+					if($getAllTags){
+						$response = (new Status\Ok([
+							"success" => true,
+							"result" => $returnResult
+						]));
+					} else {
+						$response = (new Status\Ok([
+							"success" => true,
+							"result" => $returnResult[0]
+						]));
 					}
-				}
-
-				if($getAllTags){
-					$response = (new Status\Ok([
-						"success" => true,
-						"result" => $returnResult
-					]));
-				} else {
-					$response = (new Status\Ok([
-						"success" => true,
-						"result" => $returnResult[0]
-					]));
 				}
 			}
 		} catch (PDOException $e) {
 			$response = (new Status\InternalServerError([
 				"success" => false,
-				"message" => "Reading facility failed."
+				"message" => "Reading facility failed: An exception has occured."
 			]));
 		}
 		return $response;
 	}
-	
+
+	// Updates the tag with the given $idOrName, depending on the value passed to $onIdOrName, which should either be "id" or "name"	
 	public function updateTag($onIdOrName, $idOrName){
-		$response = (new Status\BadRequest([
+		$response = (new Status\NotFound([
 			"success" => false,
-			"message" => "Tag update failed: Invalid ID or tag name given."
+			"message" => "Tag update failed: No tag found with the given ID."	//"Tag update failed: Invalid ID or tag name given."
 		]));
 
+		// The only updateable field of a tag is the name, so check if name exists before attempting an update
 		if($this->name) {
 			try {
 				$this->db->beginTransaction();
 				$tagCheckQuery;
 				$tagCheckQueryBind = [$idOrName];
-				//TODO: Remove the ability to update tag by ID? It is rather unecessary
 				$updateQuery = "UPDATE Tags
 						SET Name = ?";
 				$updateQueryBind = [$this->name, $idOrName];
-				if ($onIdOrName == "name") {
-					$tagCheckQuery = "SELECT Name FROM Tags WHERE Name = ?";
-					$updateQuery .= " WHERE Name = ?";
-				} /*elseif ($onIdOrname == "id") {
+				if ($onIdOrName == "id") {
 					$tagCheckQuery = "SELECT Id FROM Tags WHERE Id = ?";
 					$updateQuery .= " WHERE Id = ?";
+				} /*elseif ($onIdOrName == "name") {
+					$tagCheckQuery = "SELECT Name FROM Tags WHERE Name = ?";
+					$updateQuery .= " WHERE Name = ?";
 				}*/
-				$tagCheck = $this->db->executeQuery($tagCheckQuery, $tagCheckQueryBind);
-				$tagCheckResult = $this->db->getStatement()->fetchAll(PDO::FETCH_ASSOC);
-				if($tagCheckResult){
-					$updateSuccess = $this->db->executeQuery($updateQuery, $updateQueryBind);
-					if($updateSuccess){
-						$response = (new Status\Ok([
-							"success" => true,
-							"message" => "Tag update successful.",
-							"oldTagName" => $idOrName,
-							"newTagName" => $this->name
-						]));
-						$this->db->commit();
+				if($tagCheckQuery) {
+					$tagCheck = $this->db->executeQuery($tagCheckQuery, $tagCheckQueryBind);
+					$tagCheckResult = $this->db->getStatement()->fetchAll(PDO::FETCH_ASSOC);
+					if($tagCheckResult){
+						$updateSuccess = $this->db->executeQuery($updateQuery, $updateQueryBind);
+						if($updateSuccess){
+							//TODO: Custom 304 Status class
+							if($this->db->getStatement()->RowCount()){
+								$response = (new Status\Ok([
+									"success" => true,
+									"message" => "Tag update successful.",
+									"result" => json_decode($this->readTag()->getBody(), true)["result"]
+								]));
+							} else {
+								$response = (new Status\Ok([
+									"success" => true,
+									"message" => "Tag update successful: No fields were changed.",
+									"result" => json_decode($this->readTag()->getBody(), true)["result"]
+								]));
+							}
+							$this->db->commit();
+						}
 					}
 				}
 		
 			} catch (PDOException $e) {
 				$this->db->rollBack();
+				$response = (new Status\InternalServerError([
+					"success" => false,
+					"message" => "Tag update failed: An exception has occured. Ensure the given fields are valid.",
+				]));
 			}
 		}
 		return $response;
@@ -160,7 +175,7 @@ class Tag extends BaseModel {
 			try {
 				$this->db->beginTransaction();
 				$success = $this->db->executeQuery($query, $bind);
-				if ($success) {
+				if ($success && $this->db->getStatement()->RowCount()) {
 					$response = (new Status\NoContent());
 					$this->db->commit();
 				}

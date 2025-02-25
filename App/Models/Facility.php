@@ -32,17 +32,16 @@ class Facility extends BaseModel {
 		if($this->name){
 			$facilitiesQuery = "INSERT INTO Facilities (Name, LocationId)     
 				VALUES (?, ?)";                                 
-			//Location is fixed to Amsterdam (id=1), the Name of the default Location for Facilities that are created after dbSetup.sql is imported         
+			//Location is fixed to Amsterdam (id=1), the Name of the default Location for Facilities that are created after dbSetup.sql is imported 
 			$facilitiesQueryBind = [$this->name, "1"];
 			try {
 				$this->db->beginTransaction();
-				$facilitiesQuerySuccess = $this->db->executeQuery($facilitiesQuery, $facilitiesQueryBind);      
+				$facilitiesQuerySuccess = $this->db->executeQuery($facilitiesQuery, $facilitiesQueryBind);     
 				if($facilitiesQuerySuccess){            
 					//assign tags if present in request and they exist in the database
 					$this->id = $this->db->getlastInsertedId();
 					if($this->tags){                     
 						//append each tag to be assigned and do it all in one insert query                                                              
-						//By removing the IGNORE from INSERT IGNORE below you can force the 
 						$facilitiesTagsQuery = "INSERT INTO FacilitiesTags (FacilityId, TagId)";	
 						$facilitiesTagsQueryBind = [];                             
 						foreach($this->tags as $tagName){
@@ -161,7 +160,7 @@ class Facility extends BaseModel {
 								$tags = explode(",", $resultRow["tagNames"]);
 								foreach($tags as $index => $tagName){
 									$tag = new Tag(["name" => $tagName]);
-									$tags[$index] = json_decode($tag->readTag()->getBody(), true)["result"]["name"];
+									$tags[$index] = json_decode($tag->readTag()->getBody(), true)["result"];
 								}
 							}
 							$facility->tags = $tags;
@@ -211,7 +210,7 @@ class Facility extends BaseModel {
 							WHERE Facilities.Id = ?";
 						$updateQueryBind = [$this->name, $this->id];
 						$facilitySuccess = $this->db->executeQuery($updateQuery, $updateQueryBind);
-						if($facilitySuccess){
+						if($facilitySuccess && $this->db->getStatement()->RowCount()){
 							$facilityUpdated = true;
 						}
 					}
@@ -219,7 +218,7 @@ class Facility extends BaseModel {
 						//TODO: Insert ignore for duplicate tags? Might be a good idea
 						$updateTagsQuery = "INSERT INTO FacilitiesTags (FacilityId, TagId)";
 						$updateTagsQueryBind = [];
-						foreach($this->tags as $tagName){	
+						foreach($this->tags as $tagName){
 							if($tagName == $this->tags[0]){
 								$updateTagsQuery .= " VALUES (?, (SELECT Id FROM Tags WHERE Name = ?))";
 							} else {
@@ -227,8 +226,9 @@ class Facility extends BaseModel {
 							}
 							array_push($updateTagsQueryBind, $this->id, $tagName);
 						}
+						$updateTagsQuery .= " ON DUPLICATE KEY UPDATE FacilityId=FacilityId";
 						$updateTagsQuerySuccess = $this->db->executeQuery($updateTagsQuery, $updateTagsQueryBind);
-						if($updateTagsQuerySuccess){
+						if($updateTagsQuerySuccess && $this->db->getStatement()->RowCount()){
 							$facilityUpdated = true;
 						}
 					}
@@ -239,9 +239,11 @@ class Facility extends BaseModel {
 							"result" => json_decode($this->readFacility()->getBody(), true)["result"]
 						]));
 					} else {
-						$response = (new Status\BadRequest([
-							"success" => false,
-							"message" => "Facility update failed: No valid properties to update have been supplied."
+						//TODO: Create a custom 304 Status (Not Modified) class for the event that no fields are changed, would be more suitable than a 200/400
+						$response = (new Status\Ok([
+							"success" => true,
+							"message" => "Facility update successful: No fields were changed.",
+							"result" => json_decode($this->readFacility()->getBody(), true)["result"]
 						]));
 					}
 					$this->db->commit();
@@ -255,7 +257,7 @@ class Facility extends BaseModel {
 				$this->db->rollBack();
 				$response = (new Status\InternalServerError([
 					"success" => false,
-					"message" => "Facility update failed: One or more fields are invalid. Ensure the supplied tag(s) exist and the facility does not already possess said tags."
+					"message" => "Facility update failed: An exception has occured. Ensure all fields are valid."
 				]));
 			}
 		}
@@ -276,8 +278,8 @@ class Facility extends BaseModel {
 			$bind = [$this->id];
 			try {
 				$this->db->beginTransaction();
-				$success =$this->db->executeQuery($query, $bind);
-				if ($success) {
+				$success = $this->db->executeQuery($query, $bind);
+				if ($success && $this->db->getStatement()->RowCount()) {
 					$response = (new Status\NoContent());
 					$this->db->commit();
 				}
@@ -286,6 +288,32 @@ class Facility extends BaseModel {
 				$response = (new Status\InternalServerError([
 					"success" => false,
 					"message" => "Facility deletion failed: An exception has occured."
+				]));
+			}
+		}
+		return $response;
+	}
+
+	public function deleteTagFromFacility($tagId){
+		$response = (new Status\NotFound([
+			"success" => false,
+			"message" => "Facility deletion failed: Facility does not possess a tag with the supplied ID."
+		]));
+		if($tagId){
+			$query = "DELETE FROM FacilitiesTags WHERE FacilityId = ? AND TagId = ?";
+			$bind = [$this->id, $tagId];
+			try{
+				$this->db->beginTransaction();
+				$success = $this->db->executeQuery($query, $bind);
+				if ($success && $this->db->getStatement()->RowCount()) {
+					$response = (new Status\NoContent());
+					$this->db->commit();
+				}
+			} catch (PDOEXception $e) {
+				$this->db->rollBack();
+				$response = (new Status\InternalServerError([
+					"success" => false,
+					"message" => "Tag deletion from facility failed: An exception has occured."
 				]));
 			}
 		}

@@ -12,7 +12,7 @@ class Location extends BaseModel {
 	public $phoneNumber;
 
 	public function __construct($locationData){
-                foreach($locationData as $locationDataKey => $locationDataValue){            
+                foreach($locationData as $locationDataKey => $locationDataValue){  
 			$this->$locationDataKey = $locationDataValue;
 		}
 	}

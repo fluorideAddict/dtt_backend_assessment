@@ -35,13 +35,30 @@ CREATE TABLE FacilitiesTags(
 );
 
 /* populate locations table */
-INSERT INTO Locations (City, Address, ZipCode, CountryCode, PhoneNumber)
-VALUES ("Amsterdam", "Sint Nicolaasstraat 9", "1012NJ", "31", "020 331 5848");
+INSERT INTO Locations (City, Address, ZipCode, CountryCode, PhoneNumber) VALUES ("Amsterdam", "Sint Nicolaasstraat 9", "1012NJ", "31", "0203315848");
+INSERT INTO Locations (City, Address, ZipCode, CountryCode, PhoneNumber) VALUES ("Amsterdam", "Van Woustraat 69-hs", "1074AD", "31", "0206645771");
+INSERT INTO Locations (City, Address, ZipCode, CountryCode, PhoneNumber) VALUES ("Tilburg", "Veemarktstraat 44", "5038CV", "31", "0314609500");
+INSERT INTO Locations (City, Address, ZipCode, CountryCode, PhoneNumber) VALUES ("Den Haag", "Binnenhof 17", "2513AA", "31", "0201234567");
 
 /* populate facilities table */
-/*INSERT INTO Facilities ()
-VALUES ();*/
+INSERT INTO Facilities (Name, LocationId) VALUES ("Headquarters", 1);
+INSERT INTO Facilities (Name, LocationId) VALUES ("Secondary Office", 2);
+INSERT INTO Facilities (Name, LocationId) VALUES ("Factory", 3);
+INSERT INTO Facilities (Name, LocationId) VALUES ("Call Center", 4);
 
 /* populate tags table */
-/*INSERT INTO Tags ()
-VALUES ();*/
+INSERT INTO Tags (Name) VALUES ("Customer Support");
+INSERT INTO Tags (Name) VALUES ("Storage");
+INSERT INTO Tags (Name) VALUES ("Parking Space");
+INSERT INTO Tags (Name) VALUES ("Elevator");
+INSERT INTO Tags (Name) VALUES ("Coffee Machine");
+INSERT INTO Tags (Name) VALUES ("Security");
+
+/* give facilities some tags */
+INSERT INTO FacilitiesTags (FacilityId, TagId) VALUES (1, 4);
+INSERT INTO FacilitiesTags (FacilityId, TagId) VALUES (1, 5);
+INSERT INTO FacilitiesTags (FacilityId, TagId) VALUES (3, 2);
+INSERT INTO FacilitiesTags (FacilityId, TagId) VALUES (3, 3);
+INSERT INTO FacilitiesTags (FacilityId, TagId) VALUES (3, 4);
+INSERT INTO FacilitiesTags (FacilityId, TagId) VALUES (4, 1);
+INSERT INTO FacilitiesTags (FacilityId, TagId) VALUES (4, 5);

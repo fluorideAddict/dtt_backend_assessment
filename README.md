@@ -38,24 +38,4 @@ This will invoke the executeQuery method of the `App\Plugins\Db\Db` class.
 ### Database Setup
 Import dbSetup.sql into [phpmyadmin](http://localhost/phpmyadmin).
 
-### API Usage
-The API has 9 approachable endpoints:
-- /facilities
-   - POST: Create a Facility using fields from the given createData object to be passed in the request body.
-   - GET: Retrieve all Facilities, or if query strings are passed retreive all Facilities with matching fields
-- /facilities/id
-   - GET: Retrieve the Facility with the ID of the given endpoint
-   - DELETE: Delete the Facility with the ID of the given endpoint
-   - PATCH: Update a Facility using fields from the given updateData object to be passed in the request body.
-- /tags
-   - POST: Create a Tag using fields from the given createData object passed in the request body.
-   - GET: Retrieve all Tags and their respective ID and names, or if query strings are passed retrieve all Tags with matching fields 
-- /tags/id
-   - ~~PATCH: Update a Tag with the ID of the given endpoint using the fields from the given updateData object to be passed in the request body.~~ The functionality for this endpoint is present but unused, so this endpoint ends up disabled.
-   - GET: Retrieve the Tag with the ID of the given endpoint
-   - DELETE: Deletes the Tag with the ID of the given endpoint
-- /tags/name
-   - PATCH: Update a Tag using fields from the given updateData object to be passed in the request body.
-
-Consult the Postman documentation for examples on how use the API.
-        
+Consult the Postman documentation for instructions on how to use the API and examples.

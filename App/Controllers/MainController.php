@@ -162,7 +162,7 @@ class MainController extends BaseController {
 			$requestBodyJson = file_get_contents("php://input");
 			$requestBody = json_decode($requestBodyJson, true);
 			if($requestBody && isset($requestBody["updateData"])){
-				$name = str_replace("-", " ", $name);
+				$name = str_replace("_", " ", $name);
 				$updateData = $requestBody["updateData"];
 				$tag = new Tag($updateData);
 				$response = $tag->updateTag("name", $name);
